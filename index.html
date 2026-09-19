@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>No Fake — Vérification d'authenticité</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="wordmark">No <em>Fake</em></div>
+    <div class="tagline-small">bureau de vérification visuelle</div>
+  </header>
+
+  <div class="hero">
+    <div class="seal" id="heroSeal" aria-hidden="true"></div>
+    <h1>Cette image dit-elle<br><span class="accent">la vérité ?</span></h1>
+    <p class="lede">Déposez une photo ou une vidéo. L'outil l'examine à la recherche de traces de montage ou de génération par intelligence artificielle, et rend un avis motivé.</p>
+  </div>
+
+  <div class="dossier">
+    <label class="dropzone" id="dropzone" for="fileInput">
+      <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+        <path d="M4 16.5V18a2 2 0 002 2h12a2 2 0 002-2v-1.5"/>
+        <path d="M7 9l5-5 5 5"/>
+        <path d="M12 4.5V15"/>
+      </svg>
+      <div class="dz-title">Glissez un fichier ici, ou cliquez pour le choisir</div>
+      <div class="dz-sub" id="dzSub">Image (JPEG, PNG, WebP) ou vidéo</div>
+      <input type="file" id="fileInput" accept="image/*,video/*">
+    </label>
+
+    <div class="preview-row" id="previewRow" hidden>
+      <img class="preview-thumb" id="previewThumb" alt="">
+      <div class="preview-meta">
+        <div class="preview-name" id="previewName"></div>
+        <div class="preview-sub" id="previewSub"></div>
+      </div>
+      <button class="preview-clear" id="previewClear" type="button">Retirer</button>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn" id="analyzeBtn" disabled>Analyser ce fichier</button>
+  </div>
+  <div class="status-line" id="statusLine" aria-live="polite"></div>
+
+  <div class="report" id="report" hidden>
+    <div class="report-head">
+      <div class="report-seal" id="reportSeal"></div>
+      <div>
+        <p class="report-verdict-label" id="verdictLabel"></p>
+        <p class="report-summary" id="verdictSummary"></p>
+      </div>
+    </div>
+
+    <div class="ia-reveal" id="iaReveal" hidden>
+      <img id="iaRevealImg" alt="Photo analysée">
+      <div class="ia-stamp">You are <em>demasked</em><br>by Oma Tokita</div>
+    </div>
+
+    <div class="confidence-block">
+      <div class="confidence-label">
+        <span>Degré de certitude</span>
+        <span id="confidenceValue">—</span>
+      </div>
+      <div class="confidence-track"><div class="confidence-fill" id="confidenceFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="indices-title">Ce qui a été observé</div>
+    <ul class="indices-list" id="indicesList"></ul>
+
+    <p class="disclaimer" id="disclaimerText"></p>
+  </div>
+
+  <footer>No Fake rend un avis basé sur l'analyse visuelle d'une IA — pas une preuve d'expertise judiciaire.</footer>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>
