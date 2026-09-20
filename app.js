@@ -189,7 +189,13 @@
         body: JSON.stringify({ image: base64, mediaType })
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        renderError(res.status === 504 || res.status === 502 ? "timeout" : "invalid_response");
+        return;
+      }
 
       if (!res.ok) {
         renderError(data && data.error);
@@ -209,9 +215,10 @@
     const map = {
       missing_key: "Le serveur n'est pas configuré (clé API manquante). Vérifiez la variable GEMINI_API_KEY sur Vercel.",
       too_large: "Ce fichier est trop volumineux. Essayez une image ou une vidéo plus légère.",
-      rate_limited: "Trop de demandes pour l'instant (limite du niveau gratuit) — réessayez dans une minute.",
+      rate_limited: "Trop de demandes pour l'instant (limite du niveau gratuit) — attendez une minute avant de réessayer.",
+      timeout: "Le service d'analyse a mis trop de temps à répondre — réessayez dans un instant.",
       upstream_error: "Le service d'analyse a rencontré un problème. Réessayez.",
-      invalid_response: "La réponse reçue était illisible — réessayez.",
+      invalid_response: "La réponse du serveur était illisible — réessayez dans un instant.",
       network: "Impossible de contacter le serveur d'analyse. Vérifiez votre connexion et réessayez."
     };
     setStatus(map[code] || "Un problème est survenu pendant l'analyse. Réessayez.", true);
