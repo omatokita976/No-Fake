@@ -1,8 +1,8 @@
 // Fonction serverless Vercel — POST /api/analyze
 // Reçoit { image: <base64 sans préfixe>, mediaType: "image/jpeg" }
-// Appelle l'API Anthropic (Claude) avec vision et renvoie un verdict JSON.
+// Appelle l'API Gemini de Google (niveau gratuit, vision) et renvoie un verdict JSON.
 
-const MODEL = process.env.CLAUDE_MODEL || "claude-sonnet-5";
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
 const PROMPT = `Tu es un expert en analyse forensique d'images, spécialisé dans la détection de montages photo et d'images générées par intelligence artificielle.
 
@@ -31,7 +31,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     res.status(500).json({ error: "missing_key" });
     return;
@@ -49,44 +49,42 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+    const response = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01"
+        "x-goog-api-key": apiKey
       },
       body: JSON.stringify({
-        model: MODEL,
-        max_tokens: 500,
-        messages: [
+        contents: [
           {
             role: "user",
-            content: [
-              {
-                type: "image",
-                source: {
-                  type: "base64",
-                  media_type: mediaType || "image/jpeg",
-                  data: image
-                }
-              },
-              { type: "text", text: PROMPT }
+            parts: [
+              { inlineData: { mimeType: mediaType || "image/jpeg", data: image } },
+              { text: PROMPT }
             ]
           }
-        ]
+        ],
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.2
+        }
       })
     });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        res.status(429).json({ error: "rate_limited" });
+        return;
+      }
       res.status(502).json({ error: "upstream_error" });
       return;
     }
 
     const data = await response.json();
-    const text = (data.content || [])
-      .map((block) => (block.type === "text" ? block.text : ""))
-      .join("");
+    const text = (data.candidates && data.candidates[0] && data.candidates[0].content &&
+      data.candidates[0].content.parts && data.candidates[0].content.parts.map((p) => p.text || "").join("")) || "";
 
     const match = text.match(/\{[\s\S]*\}/);
     if (!match) {
@@ -107,3 +105,4 @@ module.exports = async function handler(req, res) {
     res.status(502).json({ error: "upstream_error" });
   }
 };
+
