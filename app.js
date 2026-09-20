@@ -207,8 +207,9 @@
 
   function renderError(code) {
     const map = {
-      missing_key: "Le serveur n'est pas configuré (clé API manquante). Vérifiez la variable ANTHROPIC_API_KEY sur Vercel.",
+      missing_key: "Le serveur n'est pas configuré (clé API manquante). Vérifiez la variable GEMINI_API_KEY sur Vercel.",
       too_large: "Ce fichier est trop volumineux. Essayez une image ou une vidéo plus légère.",
+      rate_limited: "Trop de demandes pour l'instant (limite du niveau gratuit) — réessayez dans une minute.",
       upstream_error: "Le service d'analyse a rencontré un problème. Réessayez.",
       invalid_response: "La réponse reçue était illisible — réessayez.",
       network: "Impossible de contacter le serveur d'analyse. Vérifiez votre connexion et réessayez."

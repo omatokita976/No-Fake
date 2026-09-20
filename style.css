@@ -70,7 +70,7 @@ h1 .accent { font-style: italic; font-weight: 500; }
 
 /* dropzone */
 .dossier { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 4px; margin-bottom: 20px; }
-.dropzone { border: 1.5px dashed var(--line); border-radius: 2px; padding: 40px 20px; text-align: center; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease; }
+.dropzone { display: block; width: 100%; border: 1.5px dashed var(--line); border-radius: 2px; padding: 40px 20px; text-align: center; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease; }
 .dropzone:hover, .dropzone.drag { border-color: var(--gold-dim); background: rgba(198, 162, 71, 0.045); }
 .dropzone input[type="file"] { display: none; }
 .dz-icon { margin: 0 auto 14px; width: 30px; height: 30px; color: var(--gold-dim); }
